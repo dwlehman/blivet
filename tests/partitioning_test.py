@@ -4,6 +4,8 @@ from mock import Mock, patch
 
 import parted
 
+from blivet import Blivet
+
 from blivet.partitioning import add_partition
 from blivet.partitioning import get_next_partition_type
 from blivet.partitioning import do_partitioning
@@ -253,6 +255,36 @@ class PartitioningTestCase(unittest.TestCase):
                 part = add_partition(disk.format, all_free[1],
                                      parted.PARTITION_NORMAL,
                                      Size("10 MiB"), all_free[1].start)
+
+    def test_four_primary_partitions(self):
+        with sparsetmpfile("addparttest", Size("50 MiB")) as disk_file:
+            disk = DiskFile(disk_file)
+            disk.format = get_format("disklabel", device=disk.path, exists=False)
+
+            b = Blivet()
+            b.devicetree._add_device(disk)
+
+
+            #
+            # add a partition with an unaligned size
+            #
+            self.assertEqual(len(disk.format.partitions), 0)
+            self.assertEqual(len(disk.children), 0)
+            part = PartitionDevice("req0", size=Size("10 MiB"), primary=True, parents=[disk])
+            b.devicetree._add_device(part)
+            part = PartitionDevice("req1", size=Size("11 MiB"), primary=True, parents=[disk])
+            b.devicetree._add_device(part)
+            part = PartitionDevice("req2", size=Size("12 MiB"), primary=True, parents=[disk])
+            b.devicetree._add_device(part)
+            part = PartitionDevice("req3", size=Size("13 MiB"), primary=True, parents=[disk])
+            b.devicetree._add_device(part)
+
+            do_partitioning(b)
+
+            self.assertEqual(len(disk.children), 4)
+            self.assertEqual(len(disk.format.partitions), 4)
+            self.assertTrue(all(p.is_primary for p in disk.children))
+            self.assertTrue(all(p.parted_partition.type == parted.PARTITION_NORMAL for p in disk.children))
 
     def test_chunk(self):
         dev1 = Mock()
