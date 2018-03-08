@@ -97,6 +97,7 @@ class MDRaidArrayDevice(ContainerDevice):
         # prior to instantiating the superclass.
         self._memberDevices = 0     # the number of active (non-spare) members
         self._totalDevices = 0      # the total number of members
+        self._usable = not exists
 
         if level == "container":
             self._type = "mdcontainer"
@@ -380,6 +381,9 @@ class MDRaidArrayDevice(ContainerDevice):
             # information about it
             self._size = self.currentSize
 
+            # mark the array as being capable of running
+            self._usable = True
+
         # These should be incremented when adding new member devices except
         # during devicetree.populate. When detecting existing arrays we will
         # have gotten these values from udev and will use them to determine
@@ -492,7 +496,7 @@ class MDRaidArrayDevice(ContainerDevice):
         """ An MDRaidArrayDevice is complete if it has at least as many
             component devices as its count of active devices.
         """
-        return (self.memberDevices <= len(self.members)) or not self.exists
+        return self._usable or (self.memberDevices <= len(self.members)) or not self.exists
 
     @property
     def devices(self):
