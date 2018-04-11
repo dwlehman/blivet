@@ -1,6 +1,6 @@
 # devices/__init__.py
 #
-# Copyright (C) 2009-2014  Red Hat, Inc.
+# Copyright (C) 2009-2018  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -27,6 +27,7 @@ from .partition import PartitionDevice
 from .dm import DMDevice, DMLinearDevice, DMCryptDevice, DM_MAJORS
 from .luks import LUKSDevice
 from .lvm import LVMVolumeGroupDevice, LVMLogicalVolumeDevice
+from .vdo import VDODevice
 from .md import MDBiosRaidArrayDevice, MDContainerDevice, MDRaidArrayDevice, MD_MAJORS
 from .btrfs import BTRFSDevice, BTRFSVolumeDevice, BTRFSSubVolumeDevice, BTRFSSnapShotDevice
 from .file import FileDevice, DirectoryDevice, SparseFileDevice
