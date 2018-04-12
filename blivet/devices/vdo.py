@@ -96,6 +96,8 @@ class VDODevice(DMDevice):
         blockdev.vdo.remove(self.name, force=True)
 
     def _setup(self):
+        # TODO: We may need to set up the name for this mapping if there is no
+        #       vdoconf.yaml, as is the case during OS installation.
         blockdev.vdo.activate(self.name)
         blockdev.vdo.start(self.name)
 

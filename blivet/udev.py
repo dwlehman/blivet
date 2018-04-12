@@ -616,6 +616,11 @@ def device_is_dm_luks(info):
     return is_crypt and _type.startswith("luks")
 
 
+def device_is_dm_vdo(info):
+    """ Return True if the device is a mapped VDO device. """
+    return device_dm_subsystem_match(info, "vdo")
+
+
 def device_is_dm_raid(info):
     """ Return True if the device is a dmraid array device. """
     return device_dm_subsystem_match(info, "dmraid")
