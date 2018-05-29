@@ -412,9 +412,12 @@ class MDRaidArrayDevice(ContainerDevice, RaidDevice):
         if os.path.exists(self.path) and not self.sysfs_path:
             # the array has been activated from outside of blivet
             self.update_sysfs_path()
-
+            if not self.sysfs_path:
+                return status
             # make sure the active array is the one we expect
             info = udev.get_device(self.sysfs_path)
+            if not info:
+                return status
             uuid = udev.device_get_md_uuid(info)
             if uuid and uuid != self.uuid:
                 log.warning("md array %s is active, but has UUID %s -- not %s",
