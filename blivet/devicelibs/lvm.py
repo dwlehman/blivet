@@ -119,14 +119,15 @@ def lvm_cc_addFilterRejectRegexp(regexp):
 
 
 @needs_config_refresh
-def lvm_cc_removeFilterRejectRegexp(regexp):
+def lvm_cc_removeFilterRejectRegexp(regexp, quiet=False):
     """ Remove a regular expression from the --config string."""
-    log.debug("lvm filter: removing %s from the reject list", regexp)
-    try:
-        config_args_data["filterRejects"].remove(regexp)
-    except ValueError:
-        log.debug("%s wasn't in the reject list", regexp)
+    if regexp not in config_args_data["filterRejects"]:
+        if not quiet:
+            log.debug("lvm filter: %s wasn't in the reject list", regexp)
         return
+
+    log.debug("lvm filter: removing %s from the reject list", regexp)
+    config_args_data["filterRejects"].remove(regexp)
 
 
 @needs_config_refresh
