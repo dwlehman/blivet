@@ -265,10 +265,8 @@ class MDRaidArrayDevice(ContainerDevice, RaidDevice):
             except (blockdev.MDRaidError, errors.RaidError) as e:
                 log.info("could not calculate size of device %s for raid level %s: %s", self.name, self.level, e)
                 size = Size(0)
-            log.debug("non-existent RAID %s size == %s", self.level, size)
         else:
             size = self.current_size
-            log.debug("existing RAID %s size == %s", self.level, size)
 
         return size
 
