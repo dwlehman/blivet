@@ -18,8 +18,8 @@ def manage_device(*args, **kwargs):
     global b
     # create an lv named data in a vg named testvg
     device = b.factory_device(*args, **kwargs)
+    b.do_it()
     print(b.devicetree)
-    #b.do_it()
 
 
 if __name__ == "__main__":
