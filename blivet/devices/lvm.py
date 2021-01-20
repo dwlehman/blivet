@@ -1017,7 +1017,11 @@ class LVMLogicalVolumeBase(DMDevice, RaidDevice):
         """ Close, or tear down, a device. """
         log_method_call(self, self.name, status=self.status,
                         controllable=self.controllable)
-        blockdev.lvm.lvdeactivate(self.vg.name, self._name)
+        try:
+            blockdev.lvm.lvdeactivate(self.vg.name, self._name)
+        except Exception as e:
+            util.run_program(['lsblk', '-a'])
+            raise
 
     def _post_teardown(self, recursive=False):
         try:
