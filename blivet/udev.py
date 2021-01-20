@@ -26,6 +26,7 @@ import re
 import subprocess
 import logging
 import pyudev
+import time
 
 from . import util
 from .size import Size
@@ -89,6 +90,10 @@ def settle(quiet=False):
 
         :keyword bool quiet: bypass :meth:`blivet.util.run_program`
     """
+
+    # wait for a full second to allow slow systems to process async jobs
+    time.sleep(1)
+
     # wait maximal 300 seconds for udev to be done running blkid, lvm,
     # mdadm etc. This large timeout is needed when running on machines with
     # lots of disks, or with slow disks
