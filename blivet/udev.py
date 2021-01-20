@@ -92,7 +92,7 @@ def settle(quiet=False):
     """
 
     # wait for a full second to allow slow systems to process async jobs
-    time.sleep(1)
+    #time.sleep(1)
 
     # wait maximal 300 seconds for udev to be done running blkid, lvm,
     # mdadm etc. This large timeout is needed when running on machines with

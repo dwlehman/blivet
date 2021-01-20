@@ -1017,6 +1017,12 @@ class LVMLogicalVolumeBase(DMDevice, RaidDevice):
         """ Close, or tear down, a device. """
         log_method_call(self, self.name, status=self.status,
                         controllable=self.controllable)
+        #util.run_program(['lsof', self.path])
+        #util.run_program(['lsof', '/dev/' + self.get_dm_node()])
+        #util.run_program(['fuser', self.path])
+        pid = util.capture_output(['fuser', '/dev/' + self.get_dm_node()]).strip()
+        if pid:
+            util.run_program(['ps', '-q', pid, '-o', 'cmd='])
         try:
             blockdev.lvm.lvdeactivate(self.vg.name, self._name)
         except Exception as e:
