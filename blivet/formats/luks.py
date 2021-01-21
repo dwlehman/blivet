@@ -36,6 +36,7 @@ from ..i18n import _, N_
 from ..tasks import availability, lukstasks
 from ..size import Size, KiB
 from ..static_data import luks_data
+from .. import util
 
 import logging
 log = logging.getLogger("blivet")
@@ -265,6 +266,13 @@ class LUKS(DeviceFormat):
         """ Close, or tear down, the format. """
         log_method_call(self, device=self.device,
                         type=self.type, status=self.status)
+        try:
+            dm_node = blockdev.dm.node_from_name(self.device.split('/')[-1])
+            util.run_program(['lsof', '/dev/' + dm_node])
+            util.run_program(['fuser', '/dev/' + dm_node])
+        except Exception:
+            pass
+
         log.debug("unmapping %s", self.map_name)
         blockdev.crypto.luks_close(self.map_name)
 
@@ -319,6 +327,15 @@ class LUKS(DeviceFormat):
         self.uuid = blockdev.crypto.luks_uuid(self.device)
         if not self.map_name:
             self.map_name = "luks-%s" % self.uuid
+
+    def _post_destroy(self, **kwargs):
+        super(LUKS, self)._post_destroy(**kwargs)
+        try:
+            dm_node = blockdev.dm.node_from_name(self.device.split('/')[-1])
+            util.run_program(['lsof', '/dev/' + dm_node])
+            util.run_program(['fuser', '/dev/' + dm_node])
+        except Exception:
+            pass
 
     @property
     def destroyable(self):
