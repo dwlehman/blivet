@@ -337,6 +337,11 @@ class LUKS(DeviceFormat):
         except Exception:
             pass
 
+        try:
+            util.run_program(['systemctl', 'stop', "systemd-cryptsetup@%s" % self.map_name])
+        except Exception:
+            pass
+
     @property
     def destroyable(self):
         return self._plugin.available
